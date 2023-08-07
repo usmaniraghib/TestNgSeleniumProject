@@ -1,5 +1,6 @@
 package com.raghib.testngwithxml;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -8,39 +9,35 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class UserTest {
-    ChromeOptions options = null;
-    WebDriver webDriverObj = null;
-    String expectedTitle = "Google";
-
     @Test
-    public void googlePageLoadingTest() {
-        String currentTitle = webDriverObj.getTitle();
-        System.out.println("currentTitle : "+currentTitle);
-        Assert.assertEquals(currentTitle, expectedTitle);
-    }
-
-    @BeforeTest
-    public void beforeTest() {
-        // Chrome Browser
+    public void myTest() {
+        ChromeOptions options = null;
+        WebDriver webDriverObj = null;
+        String expectedTitle = "Google";
         options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
+        WebDriverManager.chromedriver().setup();
         webDriverObj = new ChromeDriver(options);
+        //webDriverObj = new ChromeDriver();
         webDriverObj.manage().window().maximize();
         webDriverObj.manage().deleteAllCookies();
 
-        webDriverObj.manage().timeouts().pageLoadTimeout(60, TimeUnit.SECONDS);
-        webDriverObj.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        Duration duration = Duration.ofSeconds(30);
+        webDriverObj.manage().timeouts().implicitlyWait(duration);
+        webDriverObj.manage().timeouts().pageLoadTimeout(duration);
         webDriverObj.get("https://www.google.com/");
 
         //Refresh the browser.
         webDriverObj.navigate().refresh();
-    }
 
-    @AfterTest
-    public void afterTest() {
+        String currentTitle = webDriverObj.getTitle();
+        System.out.println("currentTitle : "+currentTitle);
+        Assert.assertEquals(currentTitle, expectedTitle);
+
         try {
             if (webDriverObj != null) {
                 System.out.println("Driver Need to Close");
